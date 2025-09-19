@@ -1,4 +1,3 @@
-
 #!/bin/bash
 PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 
