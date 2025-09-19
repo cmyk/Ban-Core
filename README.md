@@ -49,14 +49,14 @@ Not sure how to SSH?
 **Option 1: Automatic detection (Simplest)**
 ```bash
 # Automatically detects .cookie or bitcoin.conf file
-wget https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh && \
+wget https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh && \
 chmod +x standalone-ban-core-v30.sh && \
 ./standalone-ban-core-v30.sh --install-cron
 ```
 
 **Option 2: Manual credentials**
 ```bash
-wget https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh && \
+wget https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh && \
 chmod +x standalone-ban-core-v30.sh && \
 ./standalone-ban-core-v30.sh -u yourrpcuser -P yourrpcpass --install-cron
 ```
@@ -80,7 +80,7 @@ EOF
 **Option 4: One-line install on Umbrel**
 ```bash
 # Use manual credentials with --umbrel flag
-wget https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh && \
+wget https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh && \
 chmod +x standalone-ban-core-v30.sh && \
 ./standalone-ban-core-v30.sh -u yourrpcuser -P yourrpcpass --umbrel --install-cron
 ```
@@ -96,19 +96,19 @@ Always verify the download before running it.
 ```bash
 shasum -a 256 standalone-ban-core-v30.sh
 ```
-Compare the output with the checksum shown on the v1.0 release page.
+Compare the output with the checksum shown on the v1.0.1 release page.
 
 **2) GPG signature**
 ```bash
 # Option A: fetch the public key from the release assets
-curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0/ban-core-gpg-public.asc
+curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/ban-core-gpg-public.asc
 gpg --import ban-core-gpg-public.asc
 
 # Option B: fetch from a keyserver
 gpg --keyserver keyserver.ubuntu.com --recv-keys 6E3806FC
 
 # Verify the signature
-curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh.asc
+curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh.asc
 gpg --verify standalone-ban-core-v30.sh.asc
 ```
 If it says `Good signature`, you’re good.
@@ -118,9 +118,9 @@ If it says `Good signature`, you’re good.
 
 1. Download the script:
 ```bash
-wget https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh
+wget https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh
 # or
-curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh
+curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh
 ```
 
 2. Make it executable:
@@ -328,7 +328,7 @@ Start9 runs Bitcoin Core in a podman container. The script automatically detects
 4. **Download and Run the Script**:
    ```bash
    # Download the script
-   wget https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh
+   wget https://github.com/cmyk/Ban-Core/releases/download/v1.0.1/standalone-ban-core-v30.sh
    chmod +x standalone-ban-core-v30.sh
    
    # Run with your credentials
