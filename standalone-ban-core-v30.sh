@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Bitcoin Core Knots Node Ban Script
-# This script identifies and bans/disconnects Bitcoin Knots nodes
+# Bitcoin Core v30 Node Ban Script
+# This script identifies and bans/disconnects Bitcoin Core v30 nodes
 # Works with any Bitcoin Core node with RPC enabled
 
 # Default values
@@ -71,9 +71,9 @@ Config file format (one per line):
 
 Example:
     $0 -u myuser -P mypassword
-    $0 -c ~/.bitcoin/ban-knots.conf
+    $0 -c ~/.bitcoin/ban-core.conf
     $0 -h 192.168.1.100 -u user -P pass --dry-run
-    $0 -c ~/.bitcoin/ban-knots.conf --install-cron
+    $0 -c ~/.bitcoin/ban-core.conf --install-cron
     $0 --uninstall-cron
 
 EOF
@@ -222,8 +222,8 @@ done
 
 # Handle cron operations
 if [[ "$UNINSTALL_CRON" == "true" ]]; then
-    echo "Removing ban-knots from crontab..."
-    crontab -l 2>/dev/null | grep -v "standalone-ban-knots.sh" | crontab -
+    echo "Removing ban-core from crontab..."
+    crontab -l 2>/dev/null | grep -v "standalone-ban-core-v30.sh" | crontab -
     echo "Cron job removed successfully"
     exit 0
 fi
@@ -281,13 +281,13 @@ if [[ "$INSTALL_CRON" == "true" ]]; then
     fi
     
     # Add logging
-    CRON_CMD="$CRON_CMD >> /tmp/ban-knots.log 2>&1"
+    CRON_CMD="$CRON_CMD >> /tmp/ban-core.log 2>&1"
     
     # Install cron job
     echo "Installing cron job to run every $CRON_INTERVAL minutes..."
     
     # Remove existing entries to avoid duplicates
-    crontab -l 2>/dev/null | grep -v "standalone-ban-knots.sh" > /tmp/cron_temp
+    crontab -l 2>/dev/null | grep -v "standalone-ban-core-v30.sh" > /tmp/cron_temp
     
     # Add new entry
     echo "*/$CRON_INTERVAL * * * * $CRON_CMD" >> /tmp/cron_temp
@@ -298,7 +298,7 @@ if [[ "$INSTALL_CRON" == "true" ]]; then
     
     echo "Cron job installed successfully!"
     echo "Command: $CRON_CMD"
-    echo "Check logs at: /tmp/ban-knots.log"
+    echo "Check logs at: /tmp/ban-core.log"
     echo ""
     echo "To view cron jobs: crontab -l"
     echo "To remove cron job: $0 --uninstall-cron"
@@ -318,9 +318,9 @@ if [[ "$IS_START9" == "true" && -z "$RPC_USER" && -z "$RPC_PASSWORD" ]]; then
     echo "4. Run this script with: $0 -u <username> -P <password>"
     echo ""
     echo "For automatic operation, create a config file:"
-    echo "  echo 'rpc_user=<your-username>' > ~/.bitcoin/ban-knots.conf"
-    echo "  echo 'rpc_password=<your-password>' >> ~/.bitcoin/ban-knots.conf"
-    echo "  $0 -c ~/.bitcoin/ban-knots.conf --install-cron"
+    echo "  echo 'rpc_user=<your-username>' > ~/.bitcoin/ban-core.conf"
+    echo "  echo 'rpc_password=<your-password>' >> ~/.bitcoin/ban-core.conf"
+    echo "  $0 -c ~/.bitcoin/ban-core.conf --install-cron"
     echo ""
     exit 1
 fi
@@ -394,7 +394,7 @@ bitcoin_cli() {
     fi
 }
 
-echo "=== Bitcoin Knots Node Ban Script ==="
+echo "=== Bitcoin Core Node Ban Script ==="
 if [[ "$IS_START9" == "true" ]]; then
     echo "Platform: Start9 (using podman container)"
 fi
@@ -422,21 +422,21 @@ if [[ -z "$PEERS_JSON" ]]; then
     exit 1
 fi
 
-# Find Knots nodes
-KNOTS_NODES=$(echo "$PEERS_JSON" | jq -r '.[] | select(.subver | contains("Knots")) | {addr: .addr, id: .id, subver: .subver}')
+# Find Core nodes
+CORE_NODES=$(echo "$PEERS_JSON" | jq -r '.[] | select(.subver | contains("Satoshi:30")) | {addr: .addr, id: .id, subver: .subver}')
 
-if [[ -z "$KNOTS_NODES" ]]; then
-    echo "No Knots nodes found among current peers"
+if [[ -z "$CORE_NODES" ]]; then
+    echo "No Core nodes found among current peers"
     exit 0
 fi
 
-# Count Knots nodes
-KNOTS_COUNT=$(echo "$KNOTS_NODES" | jq -s 'length')
-echo "Found $KNOTS_COUNT Knots node(s)"
+# Count Core nodes
+CORE_COUNT=$(echo "$CORE_NODES" | jq -s 'length')
+echo "Found $CORE_COUNT Core v30 node(s)"
 echo ""
 
-# Process each Knots node
-echo "$KNOTS_NODES" | jq -c '.' | while read -r node; do
+# Process each Core node
+echo "$CORE_NODES" | jq -c '.' | while read -r node; do
     addr=$(echo "$node" | jq -r '.addr')
     id=$(echo "$node" | jq -r '.id')
     subver=$(echo "$node" | jq -r '.subver')
