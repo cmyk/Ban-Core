@@ -1,3 +1,2 @@
-ban-knots.conf
-.gitignore
-
+*.conf
+*.asc
