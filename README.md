@@ -85,7 +85,34 @@ chmod +x standalone-ban-core-v30.sh && \
 ./standalone-ban-core-v30.sh -u yourrpcuser -P yourrpcpass --umbrel --install-cron
 ```
 
+
 That's it! The script will now run every 10 minutes automatically.
+
+## Verification
+
+Always verify the download before running it.
+
+**1) SHA-256**
+```bash
+shasum -a 256 standalone-ban-core-v30.sh
+```
+Compare the output with the checksum shown on the v1.0 release page.
+
+**2) GPG signature**
+```bash
+# Option A: fetch the public key from the release assets
+curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0/ban-core-gpg-public.asc
+gpg --import ban-core-gpg-public.asc
+
+# Option B: fetch from a keyserver
+gpg --keyserver keyserver.ubuntu.com --recv-keys 6E3806FC
+
+# Verify the signature
+curl -LO https://github.com/cmyk/Ban-Core/releases/download/v1.0/standalone-ban-core-v30.sh.asc
+gpg --verify standalone-ban-core-v30.sh.asc
+```
+If it says `Good signature`, you’re good.
+
 
 ## Full Installation Steps
 
