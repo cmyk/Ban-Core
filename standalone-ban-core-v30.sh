@@ -1,4 +1,6 @@
+
 #!/bin/bash
+PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
 
 # Bitcoin Core v30 Node Ban Script
 # This script identifies and bans/disconnects Bitcoin Core v30 nodes
@@ -295,7 +297,10 @@ if [[ "$INSTALL_CRON" == "true" ]]; then
     # Install new crontab
     crontab /tmp/cron_temp
     rm /tmp/cron_temp
-    
+
+    # Run once immediately to initialize log and perform first pass
+    bash -c "$CRON_CMD"
+
     echo "Cron job installed successfully!"
     echo "Command: $CRON_CMD"
     echo "Check logs at: /tmp/ban-core.log"
@@ -394,6 +399,23 @@ bitcoin_cli() {
     fi
 }
 
+
+# Retry helper: wait briefly for RPC to become ready (helps under cron)
+wait_for_node() {
+    local attempts=0
+    local max_attempts=6   # ~30s total
+    local delay=5
+    while (( attempts < max_attempts )); do
+        if bitcoin_cli getblockcount &>/dev/null; then
+            return 0
+        fi
+        echo "RPC not ready, retrying in ${delay}s..."
+        sleep "$delay"
+        attempts=$((attempts+1))
+    done
+    return 1
+}
+
 echo "=== Bitcoin Core Node Ban Script ==="
 if [[ "$IS_START9" == "true" ]]; then
     echo "Platform: Start9 (using podman container)"
@@ -403,10 +425,12 @@ echo "Disconnect Only: $DISCONNECT_ONLY"
 echo "Dry Run: $DRY_RUN"
 echo ""
 
-# Check if we can connect to the node
-if ! bitcoin_cli getblockcount &>/dev/null; then
+
+# Check if we can connect to the node (with short retries for cron)
+if ! wait_for_node; then
     echo "Error: Cannot connect to Bitcoin node at $RPC_HOST:$RPC_PORT"
-    echo "Please check your RPC credentials and connection settings"
+    echo "Hint: In cron, PATH may miss bitcoin-cli or the node may still be starting."
+    echo "Please check your RPC credentials, ensure bitcoin-cli is installed, and that the node is running."
     exit 1
 fi
 
